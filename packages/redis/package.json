@@ -1,0 +1,25 @@
+{
+  "name": "@dozo/redis",
+  "version": "1.0.0",
+  "description": "Redis client for the Dozo project",
+  "private": true,
+  "main": "./src/client.ts",
+  "types": "./src/client.ts",
+  "exports": {
+    ".": {
+      "import": "./src/client.ts",
+      "require": "./src/client.ts"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@types/ioredis": "^5.0.0",
+    "ioredis": "^6.0.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "dozo-v2",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev --ui=tui",
+    "build": "turbo run build",
+    
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  },
+  "packageManager": "pnpm@10.30.3",
+  "devDependencies": {
+    "turbo": "^2.10.11"
+  }
+}

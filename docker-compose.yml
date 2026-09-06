@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dozo
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: dozo_v2
+    ports:
+      - "5435:5432"
+    volumes:
+      - dozo_pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - dozo_redis_data:/data
+
+volumes:
+  dozo_pg_data:
+  dozo_redis_data:

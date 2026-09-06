@@ -1,0 +1,32 @@
+{
+  "name": "@dozo/db",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio --verbose",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx src/seed/index.ts"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "1.0.0-rc.4",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@dozo/env": "workspace:*",
+    "drizzle-orm": "1.0.0-rc.4",
+    "pg": "^8.23.0",
+    "zod": "^4.4.3"
+  }
+}
