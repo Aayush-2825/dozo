@@ -1,26 +1,6 @@
-import { db, booking, helper } from "@dozo/db";
+import { booking, helper } from "@dozo/db";
 import { eq, and, inArray } from "drizzle-orm";
 import type { Transaction } from "@dozo/db";
-
-/**
- * Fetches a booking by ID without acquiring a database lock.
- *
- * Safe for non-mutating read operations. High-concurrency query that does not
- * block or wait for active transactions on the target row.
- *
- * @param bookingId - Unique identifier of the target booking.
- * @returns The booking entity, or `null` if not found.
- */
-export async function findById(bookingId: string) {
-  // 1. Execute a standard SELECT query without locking
-  const result = await db
-    .select()
-    .from(booking)
-    .where(eq(booking.id, bookingId))
-    .limit(1);
-    
-  return result[0] ?? null;
-}
 
 /**
  * Fetches a booking by ID and acquires an exclusive row-level lock (`FOR UPDATE`).

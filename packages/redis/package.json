@@ -19,7 +19,6 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@types/ioredis": "^5.0.0",
     "ioredis": "^6.0.0"
   }
 }

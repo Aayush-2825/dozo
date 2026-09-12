@@ -10,6 +10,24 @@ export async function findById(tx: Transaction, helperId: string) {
   return result[0] ?? null;
 }
 
+export async function hasProfile(tx: Transaction, userId: string) {
+  const result = await tx
+    .select({ id: helper.id })
+    .from(helper)
+    .where(eq(helper.userId, userId))
+    .limit(1);
+  return result.length > 0;
+}
+
+export async function findByUserId(tx: Transaction, userId: string) {
+  const result = await tx
+    .select()
+    .from(helper)
+    .where(eq(helper.userId, userId))
+    .limit(1);
+  return result[0] ?? null;
+}
+
 export async function findByIdForUpdate(tx: Transaction, helperId: string) {
   const result = await tx
     .select()

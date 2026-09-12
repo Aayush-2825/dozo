@@ -6,12 +6,22 @@ import {
   endJob,
   startJob,
 } from "./booking.service";
-import { ConflictError, ForbiddenError, NotFoundError } from "@dozo/types";
+import {
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UnauthorizedError,
+} from "@dozo/types";
 import type { FastifyRequest , FastifyReply} from "fastify";
+import { requireAuth, requireRole } from "../auth/auth.middleware";
+import { hasProfileType } from "../auth/auth.tokens";
 
 export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
   // Helper to standardise domain error handling
   const handleError = (error: unknown, request: FastifyRequest, reply: FastifyReply) => {
+    if (error instanceof UnauthorizedError) {
+      return reply.status(401).send({ message: error.message });
+    }
     if (error instanceof NotFoundError) {
       return reply.status(404).send({ message: error.message });
     }
@@ -30,6 +40,7 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post(
     "/bookings/:bookingId/accept",
     {
+      preHandler: [requireAuth, requireRole("helper")],
       schema: {
         params: {
           type: "object",
@@ -38,17 +49,16 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
         },
         body: {
           type: "object",
-          required: ["helperId"],
-          properties: { helperId: { type: "string" } },
+          additionalProperties: false,
         },
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { bookingId } = request.params as { bookingId: string };
-      const { helperId } = request.body as { helperId: string };
+      const userId = request.user?.userId;
 
       try {
-        const updatedBooking = await acceptBooking(bookingId, helperId);
+        const updatedBooking = await acceptBooking(bookingId, userId!);
         return reply.status(200).send(updatedBooking);
       } catch (error) {
         return handleError(error, request, reply);
@@ -60,6 +70,7 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post(
     "/bookings/:bookingId/cancel",
     {
+      preHandler: [requireAuth],
       schema: {
         params: {
           type: "object",
@@ -72,12 +83,12 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
           properties: {
             initiatedBy: {
               type: "object",
-              required: ["id", "role"],
+              required: ["role"],
+              additionalProperties: false,
               properties: {
-                id: { type: "string" },
                 role: {
                   type: "string",
-                  enum: ["consumer", "helper", "admin", "system"],
+                  enum: ["consumer", "helper"],
                 },
               },
             },
@@ -101,8 +112,7 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
       const { bookingId } = request.params as { bookingId: string };
       const { initiatedBy, reason, note } = request.body as {
         initiatedBy: {
-          id: string;
-          role: "consumer" | "helper" | "admin" | "system";
+          role: "consumer" | "helper";
         };
         reason:
           | "consumer_cancelled"
@@ -115,9 +125,18 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
       };
 
       try {
+        if (!hasProfileType(request.user!, initiatedBy.role)) {
+          throw new ForbiddenError(
+            `The ${initiatedBy.role} role is not available for this account`,
+          );
+        }
+
         const updatedBooking = await cancelBooking({
           bookingId,
-          initiatedBy,
+          initiatedBy: {
+            id: request.user!.userId,
+            role: initiatedBy.role,
+          },
           reason,
           note,
         });
@@ -132,6 +151,7 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post(
     "/bookings/:bookingId/start",
     {
+      preHandler: [requireAuth, requireRole("helper")],
       schema: {
         params: {
           type: "object",
@@ -140,25 +160,25 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
         },
         body: {
           type: "object",
-          required: ["startOtp", "helperId"],
+          required: ["startOtp"],
+          additionalProperties: false,
           properties: {
             startOtp: { type: "string" },
-            helperId: { type: "string" },
           },
         },
       },
     },
     async (request: FastifyRequest, reply: FastifyReply  ) => {
       const { bookingId } = request.params as { bookingId: string };
-      const { startOtp, helperId } = request.body as {
+      const { startOtp } = request.body as {
         startOtp: string;
-        helperId: string;
       };
+      const userId = request.user?.userId;
 
       try {
         const updatedBooking = await startJob(
           bookingId,
-          helperId,
+          userId!,
           startOtp,
           fastify.redis,
         );
@@ -173,6 +193,7 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post(
     "/bookings/:bookingId/end",
     {
+      preHandler: [requireAuth, requireRole("helper")],
       schema: {
         params: {
           type: "object",
@@ -181,25 +202,25 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
         },
         body: {
           type: "object",
-          required: ["endOtp", "helperId"],
+          required: ["endOtp"],
+          additionalProperties: false,
           properties: {
             endOtp: { type: "string" },
-            helperId: { type: "string" },
           },
         },
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { bookingId } = request.params as { bookingId: string };
-      const { endOtp, helperId } = request.body as {
+      const { endOtp } = request.body as {
         endOtp: string;
-        helperId: string;
       };
+      const userId = request.user?.userId;
 
       try {
         const updatedBooking = await endJob(
           bookingId,
-          helperId,
+          userId!,
           endOtp,
           fastify.redis,
         );
@@ -214,6 +235,7 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post(
     "/bookings/:bookingId/confirm",
     {
+      preHandler: [requireAuth, requireRole("consumer")],
       schema: {
         params: {
           type: "object",
@@ -222,17 +244,16 @@ export const bookingRoutes: FastifyPluginAsync = async (fastify) => {
         },
         body: {
           type: "object",
-          required: ["consumerId"],
-          properties: { consumerId: { type: "string" } },
+          additionalProperties: false,
         },
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { bookingId } = request.params as { bookingId: string };
-      const { consumerId } = request.body as { consumerId: string };
+      const userId = request.user?.userId;
 
       try {
-        const updatedBooking = await confirmCompletion(bookingId, consumerId);
+        const updatedBooking = await confirmCompletion(bookingId, userId!);
         return reply.status(200).send(updatedBooking);
       } catch (error) {
         return handleError(error, request, reply);

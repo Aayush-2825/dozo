@@ -1,6 +1,13 @@
 import { Transaction } from "@dozo/db";
 import { NotFoundError } from "@dozo/types";
-import { findById, updateHelperCancellationCount } from "./helper.repository";
+import {
+  findByIdForUpdate,
+  findByUserId,
+  hasProfile,
+  updateHelperCancellationCount,
+} from "./helper.repository";
+
+export { findByUserId, hasProfile };
 
 export async function applyCancellationPenalty(
   tx: Transaction,
@@ -8,7 +15,7 @@ export async function applyCancellationPenalty(
 ) {
   const { helperId, bookingStatus } = input;
 
-  const existingHelper = await findById(tx, helperId);
+  const existingHelper = await findByIdForUpdate(tx, helperId);
 
   if (!existingHelper) {
     throw new NotFoundError("Helper not found");

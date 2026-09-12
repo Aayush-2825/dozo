@@ -4,9 +4,11 @@ import {
   integer,
   pgTable,
   timestamp,
+  unique,
   varchar,
 } from "drizzle-orm/pg-core";
 import { organisation } from "./organisation";
+import { user } from "./user";
 import { sql } from "drizzle-orm/sql/sql";
 
 export const helper = pgTable(
@@ -15,8 +17,9 @@ export const helper = pgTable(
     id: varchar("id", { length: 255 })
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    name: varchar("name", { length: 255 }).notNull(),
-    email: varchar("email", { length: 255 }).notNull().unique(),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
     phone: varchar("phone", { length: 50 }).notNull().unique(),
     organisationId: varchar("organisation_id", { length: 255 }).references(
       () => organisation.id,
@@ -33,5 +36,8 @@ export const helper = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
   },
-  (table) => [sql`CHECK (${table.cancellationCount} >= 0)`],
+  (table) => [
+    sql`CHECK (${table.cancellationCount} >= 0)`,
+    unique("helper_user_id_unq").on(table.userId),
+  ],
 );

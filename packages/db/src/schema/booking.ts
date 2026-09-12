@@ -1,5 +1,8 @@
 import {
+  check,
   doublePrecision,
+  index,
+  numeric,
   pgTable,
   timestamp,
   uniqueIndex,
@@ -45,7 +48,7 @@ export const booking = pgTable(
     cancellationNote: varchar("cancellation_note", { length: 500 }),
 
     // Quoted/Agreed price (Payment table owns platformCommission & payouts)
-    price: doublePrecision("price").notNull(),
+    price: numeric("price", { precision: 12, scale: 2, mode: "number" }).notNull(),
 
     // Location & Identity Snapshots (Atomic with Coordinates)
     serviceAddressSnapshot: varchar("service_address_snapshot", {
@@ -69,8 +72,20 @@ export const booking = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
+    index("booking_consumer_id_idx").on(table.consumerId),
+    index("booking_organisation_id_idx").on(table.organisationId),
+    index("booking_status_scheduled_at_idx").on(table.status, table.scheduledAt),
     uniqueIndex("helper_one_active_booking_idx")
       .on(table.helperId)
       .where(sql`status IN ('accepted', 'arrived', 'in_progress')`),
+    check("booking_price_check", sql`${table.price} >= 0`),
+    check(
+      "booking_coordinates_check",
+      sql`${table.serviceLatitudeSnapshot} BETWEEN -90 AND 90 AND ${table.serviceLongitudeSnapshot} BETWEEN -180 AND 180`,
+    ),
+    check(
+      "booking_cancellation_state_check",
+      sql`(${table.status} = 'cancelled') = (${table.cancelledAt} IS NOT NULL)`,
+    ),
   ],
 );

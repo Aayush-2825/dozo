@@ -9,11 +9,14 @@ import {
 	location,
 	organisation,
 	payment,
+	user,
 } from "../schema";
 
 const ids = {
 	consumer1: "seed-consumer-001",
 	consumer2: "seed-consumer-002",
+	consumerUser1: "seed-consumer-001",
+	consumerUser2: "seed-consumer-002",
 	organisation: "seed-organisation-001",
 	organisationHelper: "seed-helper-organisation-001",
 	organisationHelper2: "seed-helper-organisation-002",
@@ -46,20 +49,44 @@ async function seed() {
 	console.log("🌱 Starting database seed...");
 
 	// 1. Consumers & Organisations
+	await db.insert(user).values([
+		{
+			id: ids.consumerUser1,
+			name: "Seed Consumer One",
+			email: "consumer1.seed@example.com",
+		},
+		{
+			id: ids.consumerUser2,
+			name: "Seed Consumer Two",
+			email: "consumer2.seed@example.com",
+		},
+		{
+			id: ids.organisationHelper,
+			name: "Maya Patel",
+			email: "helper1.seed@example.com",
+		},
+		{
+			id: ids.organisationHelper2,
+			name: "Aarav Shah",
+			email: "helper2.seed@example.com",
+		},
+		{
+			id: ids.individualHelper,
+			name: "Rohan Mehta",
+			email: "helper3.seed@example.com",
+		},
+	]).onConflictDoNothing();
+
 	await db.insert(consumer).values([
 		{
 			id: ids.consumer1,
-			name: "Ava Sharma",
-			email: "ava.seed@example.com",
-			emailVerified: true,
+			userId: ids.consumerUser1,
 			phone: "+919876543210",
 			phoneVerified: true,
 		},
 		{
 			id: ids.consumer2,
-			name: "Karan Verma",
-			email: "karan.seed@example.com",
-			emailVerified: true,
+			userId: ids.consumerUser2,
 			phone: "+919876543220",
 			phoneVerified: true,
 		},
@@ -77,22 +104,19 @@ async function seed() {
 	await db.insert(helper).values([
 		{
 			id: ids.organisationHelper,
-			name: "Maya Patel",
-			email: "maya.seed@example.com",
+			userId: ids.organisationHelper,
 			phone: "+919876543212",
 			organisationId: ids.organisation,
 		},
 		{
 			id: ids.organisationHelper2,
-			name: "Neha Iyer",
-			email: "neha.seed@example.com",
+			userId: ids.organisationHelper2,
 			phone: "+919876543214",
 			organisationId: ids.organisation,
 		},
 		{
 			id: ids.individualHelper,
-			name: "Rohan Mehta",
-			email: "rohan.seed@example.com",
+			userId: ids.individualHelper,
 			phone: "+919876543213",
 			isLive: true,
 		},

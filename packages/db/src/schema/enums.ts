@@ -69,3 +69,9 @@ export const escrowStatusEnum = pgEnum("escrow_status", [
   "refund_pending",
   "refunded",
 ]);
+
+
+export const providerTypeEnum = pgEnum("provider_type", [
+  "credentials",
+  "google",
+])

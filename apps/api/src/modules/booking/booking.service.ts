@@ -26,13 +26,18 @@ import { verifyOtpWithAttempts } from "./booking.otp";
  * 2. A single helper attempts to accept multiple jobs concurrently.
  *
  * @param bookingId - Unique identifier of the target booking to accept.
- * @param helperId - Unique identifier of the helper accepting the job.
+ * @param userId - Authenticated account ID of the helper accepting the job.
  * @returns The updated booking entity with "accepted" status.
  * @throws {NotFoundError} If either the booking or the helper record does not exist.
  * @throws {ConflictError} If the booking is no longer available, the helper already has an active job, or assignment fails.
  */
-export async function acceptBooking(bookingId: string, helperId: string) {
+export async function acceptBooking(bookingId: string, userId: string) {
   return await db.transaction(async (tx) => {
+    const helper = await helperService.findByUserId(tx, userId);
+    if (!helper) {
+      throw new NotFoundError("Helper profile not found");
+    }
+
     // 1. Acquire row-level lock on the target booking and verify availability
     const existingBooking = await findByIdForUpdate(tx, bookingId);
     if (!existingBooking) {
@@ -44,19 +49,19 @@ export async function acceptBooking(bookingId: string, helperId: string) {
     }
 
     // 2. Acquire row-level lock on the helper to serialize concurrent acceptance requests
-    const activeHelper = await lockHelperForUpdate(tx, helperId);
+    const activeHelper = await lockHelperForUpdate(tx, helper.id);
     if (!activeHelper) {
       throw new NotFoundError("Helper not found");
     }
 
     // 3. Verify helper availability while holding the helper lock
-    const activeBooking = await findActiveBookingForHelper(tx, helperId);
+    const activeBooking = await findActiveBookingForHelper(tx, helper.id);
     if (activeBooking) {
       throw new ConflictError("Helper already has an active booking");
     }
 
     // 4. Assign the booking to the helper and return the updated record
-    const updatedBooking = await assignHelper(tx, bookingId, helperId);
+    const updatedBooking = await assignHelper(tx, bookingId, helper.id);
     if (!updatedBooking) {
       throw new ConflictError("Failed to accept booking");
     }
@@ -105,6 +110,21 @@ export async function cancelBooking(input: CancelBookingInput) {
   const { bookingId, initiatedBy, reason, note } = input;
 
   return await db.transaction(async (tx) => {
+    let actorId = initiatedBy.id;
+    if (initiatedBy.role === "consumer") {
+      const consumer = await consumerService.findByUserId(tx, initiatedBy.id);
+      if (!consumer) {
+        throw new NotFoundError("Consumer profile not found");
+      }
+      actorId = consumer.id;
+    } else if (initiatedBy.role === "helper") {
+      const helper = await helperService.findByUserId(tx, initiatedBy.id);
+      if (!helper) {
+        throw new NotFoundError("Helper profile not found");
+      }
+      actorId = helper.id;
+    }
+
     // 1. Fetch and acquire row-level lock on the target booking
     const existingBooking = await findByIdForUpdate(tx, bookingId);
     if (!existingBooking) {
@@ -128,14 +148,14 @@ export async function cancelBooking(input: CancelBookingInput) {
     // 3. Enforce role-based access control based on initiator identity
     if (
       initiatedBy.role === "consumer" &&
-      existingBooking.consumerId !== initiatedBy.id
+      existingBooking.consumerId !== actorId
     ) {
       throw new ForbiddenError("You are not authorized to cancel this booking");
     }
 
     if (
       initiatedBy.role === "helper" &&
-      existingBooking.helperId !== initiatedBy.id
+      existingBooking.helperId !== actorId
     ) {
       throw new ForbiddenError("You are not authorized to cancel this booking");
     }
@@ -164,7 +184,7 @@ export async function cancelBooking(input: CancelBookingInput) {
     }
 
     // 5. Calculate and execute refund processing if applicable
-    const refundPayment = await processBookingCancellationRefund(
+    await processBookingCancellationRefund(
       tx,
       bookingId,
       reason,
@@ -190,7 +210,7 @@ export async function cancelBooking(input: CancelBookingInput) {
  * to prevent brute-force attacks. Upon success, transitions the booking to "in_progress".
  *
  * @param bookingId - Unique identifier of the booking to start.
- * @param helperId - Unique identifier of the helper starting the job.
+ * @param userId - Authenticated account ID of the helper starting the job.
  * @param startOtp - The One-Time Password provided by the consumer to verify job start.
  * @param redis - Redis client instance used to fetch and track OTP attempts.
  * @returns The updated booking entity in "in_progress" status.
@@ -200,7 +220,7 @@ export async function cancelBooking(input: CancelBookingInput) {
  */
 export async function startJob(
   bookingId: string,
-  helperId: string,
+  userId: string,
   startOtp: string,
   redis: RedisClient,
 ) {
@@ -209,6 +229,11 @@ export async function startJob(
   const MAX_ATTEMPTS = 3;
 
   return await db.transaction(async (tx) => {
+    const helper = await helperService.findByUserId(tx, userId);
+    if (!helper) {
+      throw new NotFoundError("Helper profile not found");
+    }
+
     // 1. Fetch and acquire row-level lock on the booking record
     const booking = await findByIdForUpdate(tx, bookingId);
 
@@ -217,7 +242,7 @@ export async function startJob(
     }
 
     // 2. Authorize helper assignment
-    if (booking.helperId !== helperId) {
+    if (booking.helperId !== helper.id) {
       throw new ForbiddenError("You are not authorized to start this booking");
     }
 
@@ -240,7 +265,7 @@ export async function startJob(
     // 5. Update booking status to in-progress
     return await markBookingInProgress(tx, {
       bookingId,
-      helperId,
+      helperId: helper.id,
     });
   });
 }
@@ -253,7 +278,7 @@ export async function startJob(
  * has concluded. Transitions the booking status to "awaiting_confirmation".
  *
  * @param bookingId - Unique identifier of the booking to end.
- * @param helperId - Unique identifier of the helper ending the job.
+ * @param userId - Authenticated account ID of the helper ending the job.
  * @param endOtp - The One-Time Password provided by the consumer to verify job end.
  * @param redis - Redis client instance used to fetch and track OTP attempts.
  * @returns The updated booking entity in "awaiting_confirmation" status.
@@ -263,7 +288,7 @@ export async function startJob(
  */
 export async function endJob(
   bookingId: string,
-  helperId: string,
+  userId: string,
   endOtp: string,
   redis: RedisClient,
 ) {
@@ -272,6 +297,11 @@ export async function endJob(
   const MAX_ATTEMPTS = 3;
 
   return await db.transaction(async (tx) => {
+    const helper = await helperService.findByUserId(tx, userId);
+    if (!helper) {
+      throw new NotFoundError("Helper profile not found");
+    }
+
     // 1. Fetch and acquire row-level lock on the booking record
     const booking = await findByIdForUpdate(tx, bookingId);
 
@@ -280,7 +310,7 @@ export async function endJob(
     }
 
     // 2. Authorize helper assignment
-    if (booking.helperId !== helperId) {
+    if (booking.helperId !== helper.id) {
       throw new ForbiddenError("You are not authorized to end this booking");
     }
 
@@ -301,7 +331,7 @@ export async function endJob(
     // 5. Update booking status to signal it is ready for consumer sign-off
     return await markAwaitingConfirmation(tx, {
       bookingId,
-      helperId,
+      helperId: helper.id,
     });
   });
 }
@@ -313,14 +343,19 @@ export async function endJob(
  * ensures the booking is awaiting confirmation, and transitions the state to "completed".
  *
  * @param bookingId - Unique identifier of the booking to confirm.
- * @param consumerId - Unique identifier of the consumer confirming the completion.
+ * @param userId - Authenticated account ID of the consumer confirming completion.
  * @returns The final updated booking entity in "completed" status.
  * @throws {NotFoundError} If the target booking does not exist.
  * @throws {ForbiddenError} If the requesting consumer does not own the booking.
  * @throws {ConflictError} If the booking is not in 'awaiting_confirmation' status.
  */
-export async function confirmCompletion(bookingId: string, consumerId: string) {
+export async function confirmCompletion(bookingId: string, userId: string) {
   return await db.transaction(async (tx) => {
+    const consumer = await consumerService.findByUserId(tx, userId);
+    if (!consumer) {
+      throw new NotFoundError("Consumer profile not found");
+    }
+
     // 1. Fetch and acquire row-level lock on the booking record
     const existingBooking = await findByIdForUpdate(tx, bookingId);
     if (!existingBooking) {
@@ -328,7 +363,7 @@ export async function confirmCompletion(bookingId: string, consumerId: string) {
     }
     
     // 2. Enforce role-based access control based on consumer identity
-    if (existingBooking.consumerId !== consumerId) {
+    if (existingBooking.consumerId !== consumer.id) {
       throw new ForbiddenError(
         "You are not authorized to confirm this booking",
       );
@@ -344,7 +379,7 @@ export async function confirmCompletion(bookingId: string, consumerId: string) {
     // 4. Finalize the booking status to completed
     const updatedBooking = await markBookingAsCompleted(tx, {
       bookingId,
-      consumerId,
+      consumerId: consumer.id,
     });
     
     return updatedBooking;

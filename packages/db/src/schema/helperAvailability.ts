@@ -1,5 +1,6 @@
 import {
     check,
+  index,
   integer,
   pgTable,
   time,
@@ -24,6 +25,11 @@ export const helperAvailability = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
+    index("helper_availability_helper_day_idx").on(table.helperId, table.dayOfWeek),
+    check(
+      "availability_day_of_week_check",
+      sql`${table.dayOfWeek} BETWEEN 0 AND 6`,
+    ),
     check(
       "availability_time_order_check",
       sql`${table.startTime} < ${table.endTime}`,

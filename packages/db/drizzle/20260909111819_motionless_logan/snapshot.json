@@ -1,0 +1,3010 @@
+{
+  "version": "8",
+  "dialect": "postgres",
+  "id": "d0190bc8-01df-4bca-a6bc-ea6afab37a5b",
+  "prevIds": [
+    "723d0142-0eb2-430f-8527-33269b7181c0"
+  ],
+  "ddl": [
+    {
+      "values": [
+        "requested",
+        "searching",
+        "match_failed",
+        "accepted",
+        "arrived",
+        "in_progress",
+        "awaiting_confirmation",
+        "completed",
+        "cancelled"
+      ],
+      "name": "booking_status",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "consumer_cancelled",
+        "helper_cancelled",
+        "helper_no_show",
+        "system_timeout",
+        "admin_override",
+        "consumer_no_show"
+      ],
+      "name": "cancellation_reason",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "start",
+        "mid_job",
+        "end"
+      ],
+      "name": "checkpoint_type",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "not_held",
+        "held",
+        "released",
+        "refund_pending",
+        "refunded"
+      ],
+      "name": "escrow_status",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "pending",
+        "verified",
+        "rejected",
+        "document_review",
+        "video_review",
+        "expired"
+      ],
+      "name": "kyc_status",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "home",
+        "work",
+        "other"
+      ],
+      "name": "location_type",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "card",
+        "bank_transfer",
+        "paypal",
+        "crypto",
+        "cash",
+        "other"
+      ],
+      "name": "payment_method",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "created",
+        "pending",
+        "authorized",
+        "captured",
+        "failed",
+        "refund_pending",
+        "refunded",
+        "partially_refunded"
+      ],
+      "name": "payment_status",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "credentials",
+        "google"
+      ],
+      "name": "provider_type",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "consumer",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "helper",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "organisation",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "booking",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "booking_checkpoint",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "payment",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "location",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "kyc",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "helper_availability",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "user",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "account",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "session",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "mfa_backup_code",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "mfa_enrollment",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "consumer"
+    },
+    {
+      "type": "varchar(20)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "phone",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "consumer"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "name": "phone_verified",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "consumer"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "cancellation_count",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "consumer"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "consumer"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "consumer"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "varchar(50)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "phone",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "organisation_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "name": "is_live",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "banned_until",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "cancellation_count",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "organisation"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "organisation"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "email",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "organisation"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "name": "email_verified",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "organisation"
+    },
+    {
+      "type": "varchar(50)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "phone",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "organisation"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "organisation"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "organisation"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "consumer_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "helper_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "organisation_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "booking_status",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'requested'",
+      "generated": null,
+      "identity": null,
+      "name": "status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "service_type",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "subservice_type",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "accepted_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "arrived_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "in_progress_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "awaiting_confirmation_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "completed_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "cancelled_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "scheduled_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "cancellation_reason",
+      "typeSchema": "public",
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "cancellation_reason",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(500)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "cancellation_note",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "numeric(12,2)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "price",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(500)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "service_address_snapshot",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "service_latitude_snapshot",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "service_longitude_snapshot",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "organisation_name_snapshot",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "helper_name_snapshot",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "booking_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "type": "checkpoint_type",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "type",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "latitude",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "longitude",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "captured_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "booking_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "consumer_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "helper_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "organisation_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "numeric(12,2)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "amount_paid",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "numeric(12,2)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "platform_commission",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "numeric(12,2)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "helper_payout",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "payment_status",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'pending'",
+      "generated": null,
+      "identity": null,
+      "name": "status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "escrow_status",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'not_held'",
+      "generated": null,
+      "identity": null,
+      "name": "escrow_status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "payment_method",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "payment_method",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "gateway_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "gateway_transaction_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "gateway_payment_method",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "gateway_payment_status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "idempotency_key",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "authorized_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "captured_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "released_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "refunded_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "location_type",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'home'",
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "varchar(500)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "address",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "latitude",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "longitude",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "consumer_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "organisation_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "organisation_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "helper_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "varchar(100)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "document_type",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "varchar(500)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "document_url",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "varchar(500)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "video_kyc_url",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "kyc_status",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'pending'",
+      "generated": null,
+      "identity": null,
+      "name": "document_status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "kyc_status",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'pending'",
+      "generated": null,
+      "identity": null,
+      "name": "video_kyc_status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "kyc_status",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'pending'",
+      "generated": null,
+      "identity": null,
+      "name": "overall_status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "varchar(500)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "rejection_reason",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "submitted_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "document_reviewed_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "video_reviewed_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "overall_reviewed_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "helper_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "day_of_week",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "type": "time",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "start_time",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "type": "time",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "end_time",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "user"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "user"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "email",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "user"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "email_verified_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "user"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "last_login_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "user"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "user"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "user"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "provider_type",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "provider",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "provider_account_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "access_token",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "refresh_token",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "password_hash",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "last_used_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "refresh_token_hash",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "ip_address",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_agent",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "last_active_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "mfa_enrollment_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "code_hash",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "used_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "secret",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "name": "is_verified",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "verified_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "consumer_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "booking_consumer_id_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "organisation_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "booking_organisation_id_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "status",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        },
+        {
+          "value": "scheduled_at",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "booking_status_scheduled_at_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "helper_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": true,
+      "where": "status IN ('accepted', 'arrived', 'in_progress')",
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "helper_one_active_booking_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "booking_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        },
+        {
+          "value": "type",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "booking_checkpoint_booking_type_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "booking_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "payment_booking_id_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "status",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "payment_status_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "escrow_status",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "payment_escrow_status_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "helper_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        },
+        {
+          "value": "day_of_week",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "helper_availability_helper_day_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "account_user_id_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "session_user_id_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "refresh_token_hash",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "session_refresh_token_hash_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "expires_at",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "session_expires_at_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "mfa_enrollment_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "mfa_backup_code_enrollment_id_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "code_hash",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "mfa_backup_code_hash_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "mfa_enrollment_user_id_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "organisation_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "organisation",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "name": "helper_organisation_id_organisation_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "helper"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "consumer_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "consumer",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "booking_consumer_id_consumer_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "helper_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "helper",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "booking_helper_id_helper_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "organisation_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "organisation",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "booking_organisation_id_organisation_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "booking_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "booking",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "booking_checkpoint_booking_id_booking_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "booking_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "booking",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "payment_booking_id_booking_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "consumer_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "consumer",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "payment_consumer_id_consumer_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "helper_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "helper",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "payment_helper_id_helper_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "organisation_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "organisation",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "payment_organisation_id_organisation_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "consumer_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "consumer",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "location_consumer_id_consumer_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "organisation_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "organisation",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "location_organisation_id_organisation_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "organisation_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "organisation",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "kyc_organisation_id_organisation_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "helper_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "helper",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "kyc_helper_id_helper_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "helper_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "helper",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "helper_availability_helper_id_helper_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "account_user_id_user_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "session_user_id_user_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "session"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "mfa_enrollment_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "mfa_enrollment",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "mfa_backup_code_mfa_enrollment_id_mfa_enrollment_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "mfa_backup_code"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "mfa_enrollment_user_id_user_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "mfa_enrollment"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "consumer_pkey",
+      "schema": "public",
+      "table": "consumer",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "helper_pkey",
+      "schema": "public",
+      "table": "helper",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "organisation_pkey",
+      "schema": "public",
+      "table": "organisation",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "booking_pkey",
+      "schema": "public",
+      "table": "booking",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "booking_checkpoint_pkey",
+      "schema": "public",
+      "table": "booking_checkpoint",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "payment_pkey",
+      "schema": "public",
+      "table": "payment",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "location_pkey",
+      "schema": "public",
+      "table": "location",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "kyc_pkey",
+      "schema": "public",
+      "table": "kyc",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "helper_availability_pkey",
+      "schema": "public",
+      "table": "helper_availability",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "user_pkey",
+      "schema": "public",
+      "table": "user",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "account_pkey",
+      "schema": "public",
+      "table": "account",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "session_pkey",
+      "schema": "public",
+      "table": "session",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "mfa_backup_code_pkey",
+      "schema": "public",
+      "table": "mfa_backup_code",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "mfa_enrollment_pkey",
+      "schema": "public",
+      "table": "mfa_enrollment",
+      "entityType": "pks"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        "provider",
+        "provider_account_id"
+      ],
+      "nullsNotDistinct": false,
+      "name": "account_provider_account_id_unq",
+      "entityType": "uniques",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        "user_id",
+        "provider"
+      ],
+      "nullsNotDistinct": false,
+      "name": "account_user_id_provider_unq",
+      "entityType": "uniques",
+      "schema": "public",
+      "table": "account"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "phone"
+      ],
+      "nullsNotDistinct": false,
+      "name": "helper_phone_key",
+      "schema": "public",
+      "table": "helper",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "email"
+      ],
+      "nullsNotDistinct": false,
+      "name": "organisation_email_key",
+      "schema": "public",
+      "table": "organisation",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "gateway_transaction_id"
+      ],
+      "nullsNotDistinct": false,
+      "name": "payment_gateway_transaction_id_key",
+      "schema": "public",
+      "table": "payment",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "idempotency_key"
+      ],
+      "nullsNotDistinct": false,
+      "name": "payment_idempotency_key_key",
+      "schema": "public",
+      "table": "payment",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "organisation_id"
+      ],
+      "nullsNotDistinct": false,
+      "name": "location_organisation_id_key",
+      "schema": "public",
+      "table": "location",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "email"
+      ],
+      "nullsNotDistinct": false,
+      "name": "user_email_key",
+      "schema": "public",
+      "table": "user",
+      "entityType": "uniques"
+    },
+    {
+      "value": "\"cancellation_count\" >= 0",
+      "name": "consumer_cancellation_count_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "consumer"
+    },
+    {
+      "value": "\"price\" >= 0",
+      "name": "booking_price_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "value": "\"service_latitude_snapshot\" BETWEEN -90 AND 90 AND \"service_longitude_snapshot\" BETWEEN -180 AND 180",
+      "name": "booking_coordinates_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "value": "(\"status\" = 'cancelled') = (\"cancelled_at\" IS NOT NULL)",
+      "name": "booking_cancellation_state_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "booking"
+    },
+    {
+      "value": "\"latitude\" BETWEEN -90 AND 90 AND \"longitude\" BETWEEN -180 AND 180",
+      "name": "booking_checkpoint_coordinates_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "booking_checkpoint"
+    },
+    {
+      "value": "\"amount_paid\" >= 0 AND \"platform_commission\" >= 0 AND \"helper_payout\" >= 0 AND \"amount_paid\" = \"platform_commission\" + \"helper_payout\"",
+      "name": "payment_amounts_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "value": "\n        CASE \n          WHEN \"escrow_status\" = 'not_held' \n            THEN \"status\" IN ('created', 'pending', 'authorized', 'failed')\n          WHEN \"escrow_status\" = 'held' \n            THEN \"status\" IN ('authorized', 'captured')\n          WHEN \"escrow_status\" = 'released' \n            THEN \"status\" = 'captured'\n          WHEN \"escrow_status\" IN ('refund_pending', 'refunded') \n            THEN \"status\" IN ('refund_pending', 'refunded', 'partially_refunded')\n          ELSE FALSE\n        END\n      ",
+      "name": "valid_escrow_state",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "payment"
+    },
+    {
+      "value": "(\"consumer_id\" IS NOT NULL AND \"organisation_id\" IS NULL) OR (\"consumer_id\" IS NULL AND \"organisation_id\" IS NOT NULL)",
+      "name": "location_owner_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "value": "\"latitude\" BETWEEN -90 AND 90 AND \"longitude\" BETWEEN -180 AND 180",
+      "name": "location_coordinates_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "location"
+    },
+    {
+      "value": "(\"helper_id\" IS NOT NULL AND \"organisation_id\" IS NULL) OR (\"helper_id\" IS NULL AND \"organisation_id\" IS NOT NULL)",
+      "name": "kyc_owner_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "kyc"
+    },
+    {
+      "value": "\"day_of_week\" BETWEEN 0 AND 6",
+      "name": "availability_day_of_week_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "value": "\"start_time\" < \"end_time\"",
+      "name": "availability_time_order_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "helper_availability"
+    },
+    {
+      "value": "(\"provider\" = 'credentials' AND \"password_hash\" IS NOT NULL AND \"provider_account_id\" IS NULL) OR (\"provider\" <> 'credentials' AND \"provider_account_id\" IS NOT NULL)",
+      "name": "account_provider_fields_check",
+      "entityType": "checks",
+      "schema": "public",
+      "table": "account"
+    }
+  ],
+  "renames": []
+}

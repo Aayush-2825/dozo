@@ -1,6 +1,7 @@
 import {
   check,
-  doublePrecision,
+  index,
+  numeric,
   pgTable,
   timestamp,
   varchar,
@@ -35,9 +36,9 @@ export const payment = pgTable(
       () => organisation.id,
     ),
 
-    amountPaid: doublePrecision("amount_paid").notNull(),
-    platformCommission: doublePrecision("platform_commission").notNull(),
-    helperPayout: doublePrecision("helper_payout").notNull(),
+    amountPaid: numeric("amount_paid", { precision: 12, scale: 2, mode: "number" }).notNull(),
+    platformCommission: numeric("platform_commission", { precision: 12, scale: 2, mode: "number" }).notNull(),
+    helperPayout: numeric("helper_payout", { precision: 12, scale: 2, mode: "number" }).notNull(),
 
     status: paymentStatusEnum("status").notNull().default("pending"),
     escrowStatus: escrowStatusEnum("escrow_status")
@@ -66,6 +67,13 @@ export const payment = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
+    index("payment_booking_id_idx").on(table.bookingId),
+    index("payment_status_idx").on(table.status),
+    index("payment_escrow_status_idx").on(table.escrowStatus),
+    check(
+      "payment_amounts_check",
+      sql`${table.amountPaid} >= 0 AND ${table.platformCommission} >= 0 AND ${table.helperPayout} >= 0 AND ${table.amountPaid} = ${table.platformCommission} + ${table.helperPayout}`,
+    ),
     check(
       "valid_escrow_state",
       sql`

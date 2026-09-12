@@ -42,5 +42,9 @@ export const location = pgTable(
       "location_owner_check",
       sql`(${table.consumerId} IS NOT NULL AND ${table.organisationId} IS NULL) OR (${table.consumerId} IS NULL AND ${table.organisationId} IS NOT NULL)`
     ),
+    check(
+      "location_coordinates_check",
+      sql`${table.latitude} BETWEEN -90 AND 90 AND ${table.longitude} BETWEEN -180 AND 180`,
+    ),
   ]
 );
