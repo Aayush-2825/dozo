@@ -1,5 +1,5 @@
 import { db } from "@dozo/db";
-import { ConflictError, ValidationError } from "@dozo/types";
+import { ConflictError, UnauthorizedError, ValidationError } from "@dozo/types";
 import {
   createAccount,
   createUser,
@@ -9,6 +9,12 @@ import {
   createEmailVerificationToken,
   findAccountsByUserId,
   createSession,
+  consumeEmailVerificationToken,
+  deleteSessionByRefreshToken,
+  rotateSessionByRefreshToken,
+  deleteSessionsByUserId,
+  findUserById,
+  markUserEmailVerified,
 } from "./auth.repository";
 import { hashPassword, verifyPassword } from "./auth.hash";
 import {
@@ -18,6 +24,7 @@ import {
 import {
   generateAccessToken,
   generateRefreshToken,
+  hashRefreshToken,
   verifyRefreshToken,
 } from "./auth.tokens";
 import * as consumerService from "../consumer/consumer.service";
@@ -134,3 +141,127 @@ export async function loginUser(email: string, password: string) {
   });
 }
 
+export async function logoutUser(refreshToken: string) {
+  return await db.transaction(async (tx) => {
+    await verifyRefreshToken(tx, refreshToken);
+    await deleteSessionByRefreshToken(tx, hashRefreshToken(refreshToken));
+  });
+}
+
+export async function refreshAccessToken(refreshToken: string) {
+  return await db.transaction(async (tx) => {
+    const payload = await verifyRefreshToken(tx, refreshToken);
+    const replacedSession = await rotateSessionByRefreshToken(
+      tx,
+      hashRefreshToken(refreshToken),
+      payload.userId,
+    );
+    if (!replacedSession) {
+      throw new UnauthorizedError("Invalid or revoked refresh token");
+    }
+
+    const profileTypes = [] as ("consumer" | "helper")[];
+    if (await consumerService.hasProfile(tx, payload.userId)) {
+      profileTypes.push("consumer");
+    }
+    if (await helperService.hasProfile(tx, payload.userId)) {
+      profileTypes.push("helper");
+    }
+
+    const nextPayload = {
+      userId: payload.userId,
+      profileTypes,
+    };
+    const accessToken = generateAccessToken(nextPayload);
+    const nextRefreshToken = generateRefreshToken(nextPayload);
+    await createSession(
+      tx,
+      payload.userId,
+      nextRefreshToken.hashedToken,
+      nextRefreshToken.expiresAt,
+    );
+
+    return {
+      accessToken,
+      refreshToken: nextRefreshToken.rawToken,
+    };
+  });
+}
+
+export async function logoutAllDevices(userId: string) {
+  return await db.transaction((tx) => deleteSessionsByUserId(tx, userId));
+}
+
+export async function verifyEmail(rawToken: string) {
+  if (!rawToken.trim()) {
+    throw new ValidationError("Email verification token is required");
+  }
+
+  const tokenHash = hashVerificationToken(rawToken);
+  return await db.transaction(async (tx) => {
+    const token = await consumeEmailVerificationToken(tx, tokenHash);
+    if (!token) {
+      throw new ValidationError("Invalid or expired email verification token");
+    }
+
+    const verifiedUser = await markUserEmailVerified(tx, token.userId);
+    if (!verifiedUser) {
+      throw new ValidationError("Unable to verify email address");
+    }
+
+    return {
+      userId: verifiedUser.id,
+      emailVerifiedAt: verifiedUser.emailVerifiedAt,
+    };
+  });
+}
+
+export async function getUserProfile(userId: string) {
+  return await db.transaction(async (tx) => {
+    const existingUser = await findUserById(tx, userId);
+    if (!existingUser) {
+      throw new ValidationError("User not found");
+    }
+
+    const consumerProfile = await consumerService.findByUserId(tx, userId);
+    const helperProfile = await helperService.findByUserId(tx, userId);
+    const profiles = [] as Array<{
+      type: "consumer" | "helper";
+      details: Record<string, unknown>;
+    }>;
+
+    if (consumerProfile) {
+      profiles.push({
+        type: "consumer",
+        details: {
+          id: consumerProfile.id,
+          phone: consumerProfile.phone,
+          phoneVerified: consumerProfile.phoneVerified,
+        },
+      });
+    }
+
+    if (helperProfile) {
+      profiles.push({
+        type: "helper",
+        details: {
+          id: helperProfile.id,
+          phone: helperProfile.phone,
+          organisationId: helperProfile.organisationId,
+          isLive: helperProfile.isLive,
+          bannedUntil: helperProfile.bannedUntil,
+        },
+      });
+    }
+
+    return {
+      user: {
+        id: existingUser.id,
+        name: existingUser.name,
+        email: existingUser.email,
+      },
+      profileTypes: profiles.map((profile) => profile.type),
+      profiles,
+    };
+  });
+}

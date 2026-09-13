@@ -3,6 +3,7 @@ import { currentLogger } from "./utils/pino";
 import dbPlugin from "./plugins/db";
 import redisPlugin from "./plugins/redis";
 import { bookingRoutes } from "./modules/booking/booking.routes";
+import { authRoutes } from "./modules/auth/auth.routes";
 import { ForbiddenError, UnauthorizedError } from "@dozo/types";
 
 const app = Fastify({
@@ -27,6 +28,7 @@ app.setErrorHandler((error, _request, reply) => {
 });
 
 app.register(bookingRoutes, { prefix: "/api" });
+app.register(authRoutes, { prefix: "/api" });
 
 app.get("/", async (_request, reply) => {
   return reply.send({ message: "Hello, World!" });

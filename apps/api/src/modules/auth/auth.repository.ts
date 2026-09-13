@@ -7,7 +7,7 @@ import {
   type Transaction,
   helper,
 } from "@dozo/db";
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, isNull } from "drizzle-orm";
 
 export async function findUserByEmail(tx: Transaction, email: string) {
   const result = await tx
@@ -149,5 +149,82 @@ export async function findActiveSessionByRefreshTokenHash(
       ),
     )
     .limit(1);
+  return result[0] ?? null;
+}
+
+export async function deleteSessionByRefreshToken(
+  tx: Transaction,
+  refreshTokenHash: string,
+) {
+  await tx
+    .delete(session)
+    .where(eq(session.refreshTokenHash, refreshTokenHash));
+}
+
+export async function rotateSessionByRefreshToken(
+  tx: Transaction,
+  refreshTokenHash: string,
+  userId: string,
+) {
+  const result = await tx
+    .delete(session)
+    .where(
+      and(
+        eq(session.refreshTokenHash, refreshTokenHash),
+        eq(session.userId, userId),
+        gt(session.expiresAt, new Date()),
+      ),
+    )
+    .returning({ id: session.id });
+
+  return result[0] ?? null;
+}
+
+export async function deleteSessionsByUserId(
+  tx: Transaction,
+  userId: string,
+) {
+  await tx.delete(session).where(eq(session.userId, userId));
+}
+
+export async function consumeEmailVerificationToken(
+  tx: Transaction,
+  tokenHash: string,
+) {
+  const result = await tx
+    .update(emailVerificationToken)
+    .set({ usedAt: new Date() })
+    .where(
+      and(
+        eq(emailVerificationToken.tokenHash, tokenHash),
+        isNull(emailVerificationToken.usedAt),
+        gt(emailVerificationToken.expiresAt, new Date()),
+      ),
+    )
+    .returning({ userId: emailVerificationToken.userId });
+
+  return result[0] ?? null;
+}
+
+export async function markUserEmailVerified(
+  tx: Transaction,
+  userId: string,
+) {
+  const result = await tx
+    .update(user)
+    .set({ emailVerifiedAt: new Date() })
+    .where(eq(user.id, userId))
+    .returning();
+
+  return result[0] ?? null;
+}
+
+export async function findUserById(tx: Transaction, userId: string) {
+  const result = await tx
+    .select()
+    .from(user)
+    .where(eq(user.id, userId))
+    .limit(1);
+
   return result[0] ?? null;
 }
